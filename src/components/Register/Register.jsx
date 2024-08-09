@@ -38,7 +38,7 @@ const theme = createTheme();
 export default function Register() {
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert("hello")
+    alert("Working on it...")
     const data = new FormData(event.currentTarget);
     console.log({
       firstName: data.get("firstName"),

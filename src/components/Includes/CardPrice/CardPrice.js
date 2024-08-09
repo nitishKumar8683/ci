@@ -61,26 +61,25 @@ const CardPrice = () => {
                     textAlign: 'center',
                     mb: 4,
                     mt: 4,
-                    color: 'primary.main', 
-                    fontWeight: 'bold', 
-                    fontSize: '2.5rem', 
-                    position: 'relative', 
+                    color: 'primary.main',
+                    fontWeight: 'bold',
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // Responsive font size
+                    position: 'relative',
+                    whiteSpace: 'nowrap', // Prevent text from wrapping
                     '&::after': {
                         content: '""',
                         position: 'absolute',
                         left: 0,
                         right: 0,
-                        bottom: -10, 
-                        height: 2, 
-                        backgroundColor: '#6c757d', 
-                        borderRadius: 1, 
+                        bottom: -10,
+                        height: 2,
+                        backgroundColor: '#6c757d',
+                        borderRadius: 1,
                     }
                 }}
             >
                 Choose Your Bus Pass
             </Typography>
-
-
 
             <Grid container  spacing={3}>
                 {cardData.map((card, index) => (
