@@ -5,18 +5,17 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 // Styled component for the image container
 const ImageContainer = styled(Box)(({ theme }) => ({
-    backgroundImage: 'url(/shutterstock_288363524.jpg)', // Ensure this path is correct
-    backgroundSize: 'cover',  // Cover ensures the image covers the container area
-    backgroundPosition: 'center', // Center the image within the container
-    backgroundRepeat: 'no-repeat', // Prevent repeating the image
-    width: '100%', // Full width of the container
-    height: '60vh', // Set a reasonable height for larger screens
+    backgroundImage: 'url(/shutterstock_2407889395.jpg)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    width: '100%',
+    height: '60vh',
     [theme.breakpoints.down('md')]: {
-        height: '50vh', // Adjust the height for smaller screens
+        height: '30vh',
     },
 }));
 
-// Styled component for the text container
 const TextContainer = styled(Box)(({ theme }) => ({
     padding: theme.spacing(4),
     display: 'flex',
@@ -26,17 +25,17 @@ const TextContainer = styled(Box)(({ theme }) => ({
 }));
 
 const About = () => {
-    const theme = useTheme(); // Access the theme
-    const isMobile = useMediaQuery(theme.breakpoints.down('md')); // Check if screen size matches
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     return (
         <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Box
                 display="flex"
-                flexDirection={isMobile ? 'column' : 'row'} // Switch layout based on screen size
+                flexDirection={isMobile ? 'column' : 'row'}
                 alignItems="center"
                 justifyContent="center"
-                sx={{ height: 'auto' }} // Auto height to fit content
+                sx={{ height: 'auto' }}
             >
                 <TextContainer flex={1}>
                     <Typography variant="h2" component="h1" gutterBottom>
@@ -49,8 +48,8 @@ const About = () => {
                         Our team is committed to customer satisfaction and we continually strive to improve our services based on your feedback. If you have any questions or suggestions, please do not hesitate to contact us. Thank you for choosing us for your transportation needs!
                     </Typography>
                 </TextContainer>
-                {!isMobile && <ImageContainer flex={1} />} {/* Show image only on larger screens */}
-                {isMobile && <ImageContainer sx={{ height: '40vh', marginTop: '2rem' }} />} {/* Adjust height and margin for mobile */}
+                {!isMobile && <ImageContainer flex={1} />}
+                {isMobile && <ImageContainer sx={{ height: '40vh', marginTop: '2rem' }} />}
             </Box>
         </Container>
     );
