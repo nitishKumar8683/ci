@@ -4,12 +4,14 @@ import { Container, Typography } from '@mui/material';
 import Banner from '../Banner/Banner';
 import CardPrice from '../CardPrice/CardPrice';
 import About from '../About/About';
+import ContactUs from '../ContactUs/ContactUs';
 
 const Home = () => (
     <>
         <Banner />
         <About />
         <CardPrice />
+        <ContactUs />
         <main className="py-10">
 
             <Container>
