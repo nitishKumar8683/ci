@@ -3,10 +3,12 @@ import React from 'react';
 import { Container, Typography } from '@mui/material';
 import Banner from '../Banner/Banner';
 import CardPrice from '../CardPrice/CardPrice';
+import About from '../About/About';
 
 const Home = () => (
     <>
         <Banner />
+        <About />
         <CardPrice />
         <main className="py-10">
 

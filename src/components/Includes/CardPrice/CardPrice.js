@@ -63,9 +63,9 @@ const CardPrice = () => {
                     mt: 4,
                     color: 'primary.main',
                     fontWeight: 'bold',
-                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, // Responsive font size
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }, 
                     position: 'relative',
-                    whiteSpace: 'nowrap', // Prevent text from wrapping
+                    whiteSpace: 'nowrap', 
                     '&::after': {
                         content: '""',
                         position: 'absolute',
