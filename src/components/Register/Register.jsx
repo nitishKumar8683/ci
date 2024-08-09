@@ -15,6 +15,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 function Copyright(props) {
+ 
   return (
     <Typography
       variant="body2"
@@ -37,6 +38,7 @@ const theme = createTheme();
 export default function Register() {
   const handleSubmit = (event) => {
     event.preventDefault();
+    alert("hello")
     const data = new FormData(event.currentTarget);
     console.log({
       firstName: data.get("firstName"),
@@ -52,7 +54,7 @@ export default function Register() {
         <CssBaseline />
         <Box
           sx={{
-            // marginTop: 8,
+            marginTop: 8,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -102,7 +104,7 @@ export default function Register() {
                   autoComplete="email"
                 />
               </Grid>
-              <Grid item xs={12} >
+              <Grid item xs={12}>
                 <TextField
                   name="phonenumber"
                   required
@@ -132,7 +134,12 @@ export default function Register() {
             >
               Register
             </Button>
-            <Grid container justifyContent="flex-end">
+            <Grid container justifyContent="space-between" alignItems="center">
+              <Grid item>
+                <Link href="/" variant="body2">
+                  Home
+                </Link>
+              </Grid>
               <Grid item>
                 <Link href="#" variant="body2">
                   Already have an account? Sign in

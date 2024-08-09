@@ -2,10 +2,12 @@
 import React from 'react';
 import { Container, Typography } from '@mui/material';
 import Banner from '../Banner/Banner';
+import CardPrice from '../CardPrice/CardPrice';
 
 const Home = () => (
     <>
-    <Banner />
+        <Banner />
+        <CardPrice />
         <main className="py-10">
 
             <Container>
@@ -21,7 +23,7 @@ const Home = () => (
             </Container>
         </main>
     </>
-    
+
 );
 
 export default Home;
