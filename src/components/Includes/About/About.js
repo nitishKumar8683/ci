@@ -4,13 +4,14 @@ import { styled } from '@mui/material/styles';
 
 // Styled component for the image container
 const ImageContainer = styled(Box)(({ theme }) => ({
-    backgroundImage: 'url(/shutterstock_288363524.jpg)', // Replace with your image URL
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    height: '100%',
-    width: '100%',
+    backgroundImage: 'url(/shutterstock_288363524.jpg)', // Ensure this path is correct
+    backgroundSize: 'cover',  // Cover ensures the image covers the container area
+    backgroundPosition: 'center', // Center the image within the container
+    backgroundRepeat: 'no-repeat', // Prevent repeating the image
+    height: '100%', // Take full height of the container
+    width: '100%', // Take full width of the container
     [theme.breakpoints.down('md')]: {
-        display: 'none', // Hide image on small screens
+        height: '50vh', // Adjust the height for smaller screens if needed
     },
 }));
 
