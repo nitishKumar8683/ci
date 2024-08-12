@@ -1,11 +1,12 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import { Drawer, List, ListItem, ListItemText, IconButton, Avatar, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { CssBaseline, Toolbar, AppBar } from '@mui/material';
+import Link from "next/link";
 
-const Home = () => {
+const Home = ({ children }) => {
     const [open, setOpen] = useState(false);
 
     const toggleDrawer = () => {
@@ -29,7 +30,9 @@ const Home = () => {
             <Divider />
             <List className="mt-4">
                 <ListItem button>
-                    <ListItemText primary="Profile" />
+                    <Link href="/profile">
+                        <ListItemText primary="Profile" />
+                    </Link>
                 </ListItem>
                 <ListItem button>
                     <ListItemText primary="Users" />
@@ -44,7 +47,7 @@ const Home = () => {
     return (
         <div className="flex h-screen">
             <CssBaseline />
-            <AppBar position="fixed" className="bg-blue-500">
+            <AppBar position="fixed" className="bg-blue-500 z-10">
                 <Toolbar>
                     <IconButton
                         edge="start"
@@ -69,10 +72,11 @@ const Home = () => {
             >
                 {sidebarContent}
             </Drawer>
-            <main className="flex-1 p-4 mt-16">
-                <h1 className="text-2xl font-bold">Home</h1>
-                <p className="mt-2">Welcome to the Home page!</p>
-            </main>
+            <div className={`flex-1 transition-all duration-300 ${open ? 'ml-64' : 'ml-0'} bg-gray-100`}>
+                <main className="p-4 mt-16">
+                    {children}
+                </main>
+            </div>
         </div>
     );
 };
