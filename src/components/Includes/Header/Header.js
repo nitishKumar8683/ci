@@ -21,7 +21,7 @@ const Header = () => (
                     <Button variant="contained" color="secondary" sx={{ mr: 2 }}>
                         Login
                     </Button>
-                    <Link href="/register" passHref>
+                    <Link href="/register" >
                         <Button variant="contained" color="primary">
                             Signup
                         </Button>

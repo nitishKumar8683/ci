@@ -1,11 +1,9 @@
-"use client"
+"use client";
 import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -13,9 +11,11 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import axios from "axios";
+import { Snackbar, Alert } from "@mui/material";
+import { useRef } from "react";
 
 function Copyright(props) {
- 
   return (
     <Typography
       variant="body2"
@@ -36,16 +36,47 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Register() {
-  const handleSubmit = (event) => {
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+  const [severity, setSeverity] = React.useState("success");
+  const formRef = useRef(null);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    alert("Working on it...")
     const data = new FormData(event.currentTarget);
-    console.log({
-      firstName: data.get("firstName"),
-      lastName: data.get("lastName"),
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+
+    try {
+      const response = await axios.post("/api/register", {
+        firstName: data.get("firstName"),
+        lastName: data.get("lastName"),
+        email: data.get("email"),
+        password: data.get("password"),
+        phonenumber: data.get("phonenumber"),
+      });
+
+      console.log(response);
+
+      if (response.data.success === true) {
+        setMessage(response.data.message || "User registered successfully!");
+        setSeverity("success");
+        firstName: "";
+        lastName: "";
+        email: "";
+        password: "";
+        phonenumber: data.get("");
+      } else {
+        setMessage(response.data.message || "Registration failed.");
+        setSeverity("error");
+      }
+    } catch (error) {
+      setMessage("An error occurred.");
+      setSeverity("error");
+    }
+
+    setOpen(true);
   };
 
   return (
@@ -111,7 +142,6 @@ export default function Register() {
                   fullWidth
                   id="phonenumber"
                   label="Phone Number"
-                  autoFocus
                 />
               </Grid>
               <Grid item xs={12}>
@@ -147,6 +177,31 @@ export default function Register() {
               </Grid>
             </Grid>
           </Box>
+        </Box>
+
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 16,
+            right: 16,
+            width: "auto",
+            maxWidth: 360,
+          }}
+        >
+          <Snackbar
+            open={open}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          >
+            <Alert
+              onClose={handleClose}
+              severity={severity}
+              sx={{ width: "100%" }}
+            >
+              {message}
+            </Alert>
+          </Snackbar>
         </Box>
       </Container>
     </ThemeProvider>

@@ -1,4 +1,3 @@
-// components/BusPassLogo.js
 import React from 'react';
 
 const BusPassLogo = () => (
