@@ -38,8 +38,8 @@ const validationSchema = Yup.object({
 
 export default function Register() {
   const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [severity, setSeverity] = useState("success");
+  // const [message, setMessage] = useState("");
+  // const [severity, setSeverity] = useState("success");
   const [loading, setLoading] = useState(false);
   const formRef = useRef(null);
 

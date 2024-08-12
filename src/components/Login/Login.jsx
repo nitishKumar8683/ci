@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   TextField,
@@ -11,6 +11,11 @@ import {
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Link from "next/link";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const theme = createTheme({
   palette: {
@@ -40,14 +45,34 @@ const theme = createTheme({
   },
 });
 
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string().required("Password is required"),
+});
+
 const Login = () => {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle login logic here
+  const handleSubmit = async (values, { setSubmitting }) => {
+    const response = await axios.post("/api/login", values);
+    try {
+      if (response.data.success === true) {
+        toast.success(response.data.message || "User logged in successfully");
+        setSubmitting(false);
+      } else {
+        toast.error(response.data.message || "Login failed");
+        setSubmitting(false);
+      }
+    } catch (error) {
+      toast.error("An error occurred");
+      setSubmitting(false);
+    }
+    setSubmitting(false);
   };
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <CssBaseline />
       <Container
         component="main"
@@ -81,45 +106,58 @@ const Login = () => {
           >
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-              variant="outlined"
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              variant="outlined"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-            <Typography variant="body2" align="center">
-              {"Don't have an account? "}
-              <Link href="/register" style={{ textDecoration: "none" }}>
-                <Button color="secondary">Sign Up</Button>
-              </Link>
-            </Typography>
-          </Box>
+          <Formik
+            initialValues={{ email: "", password: "" }}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <Field
+                  as={TextField}
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  name="email"
+                  label="Email Address"
+                  autoComplete="email"
+                  autoFocus
+                  variant="outlined"
+                  helperText={<ErrorMessage name="email" />}
+                  error={!!(<ErrorMessage name="email" />)}
+                />
+                <Field
+                  as={TextField}
+                  margin="normal"
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  variant="outlined"
+                  helperText={<ErrorMessage name="password" />}
+                  error={!!(<ErrorMessage name="password" />)}
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={isSubmitting}
+                >
+                  Sign In
+                </Button>
+                <Typography variant="body2" align="center">
+                  {"Don't have an account? "}
+                  <Link href="/register" style={{ textDecoration: "none" }}>
+                    <Button color="secondary">Sign Up</Button>
+                  </Link>
+                </Typography>
+              </Form>
+            )}
+          </Formik>
         </Paper>
       </Container>
     </ThemeProvider>

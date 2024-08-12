@@ -1,7 +1,7 @@
 "use client"
 import React from 'react';
 import { Button, Typography } from '@mui/material';
-import { Link } from '@mui/material';
+import Link from "next/link";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import BusPassLogo from '../BusPassLogo/BusPassLogo';
 
@@ -18,9 +18,12 @@ const Header = () => (
                     </Typography>
                 </div>
                 <div>
-                    <Button variant="contained" color="secondary" sx={{ mr: 2 }}>
-                        Login
-                    </Button>
+                    <Link href="/login" >
+                        <Button variant="contained" color="secondary" sx={{ mr: 2 }}>
+                            Login
+                        </Button>
+                    </Link>
+
                     <Link href="/register" >
                         <Button variant="contained" color="primary">
                             Signup
