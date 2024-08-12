@@ -23,7 +23,7 @@ const Profile = () => {
         email: 'nitish@example.com',
         phone: '+1234567890',
         address: '123 Main Street, City, Country',
-        profileImage: '/profile.jpg', // Path to profile image
+        profileImage: '/profile.jpg', 
     });
 
     const handleEditToggle = () => {
@@ -47,8 +47,8 @@ const Profile = () => {
 
     return (
         <DefaultPage>
-            <Box sx={{ padding: 4, maxWidth: 600, margin: 'auto', backgroundColor: '#f0f4f8' }}>
-                <Paper elevation={5} sx={{ padding: 3, borderRadius: 2, backgroundColor: '#ffffff' }}>
+            <Box sx={{ padding: 5, maxWidth: 600, margin: 'auto', backgroundColor: '#f0f4f8'  }}>
+                <Paper elevation={5} sx={{ padding: 4, borderRadius: 2, backgroundColor: '#ffffff' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">
                         <Box position="relative">
                             <Avatar
@@ -175,7 +175,6 @@ const Profile = () => {
                                     fullWidth
                                     onClick={() => {
                                         setIsEditing(false);
-                                        // Handle save logic here
                                     }}
                                     sx={{
                                         '&:hover': { backgroundColor: '#1565c0', transform: 'scale(1.05)' },

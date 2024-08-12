@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Drawer,
     List,
@@ -18,10 +18,26 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Link from "next/link";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchApiUsers, logout } from '@/app/redux/slice';
+import { useRouter } from "next/navigation";
 
 const Home = ({ children }) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const { userAPIData, isLoading, error } = useSelector((state) => state.user || {});
+
+    console.log("User API Data:", userAPIData);
+    console.log("Loading:", isLoading);
+    console.log("Error:", error);
+
+    useEffect(() => {
+        dispatch(fetchApiUsers()).catch(() => {
+            router.push('/login');
+        });
+    }, [dispatch, router]);
 
     const toggleDrawer = () => {
         setOpen(!open);
@@ -37,9 +53,11 @@ const Home = ({ children }) => {
 
 
     const handleLogout = () => {
-        // Handle logout action
         handleMenuClose();
     };
+
+    const firstName = userAPIData?.firstName || 'Nitish';
+    const lastName = userAPIData?.lastName || 'Kumar';
 
     const sidebarContent = (
         <div role="presentation" className="flex flex-col h-full p-4 bg-gray-800 text-white">
@@ -48,13 +66,15 @@ const Home = ({ children }) => {
                     <CloseIcon />
                 </IconButton>
             </div>
-            <div className="flex items-center mb-4">
-                <Avatar src="/profile.jpg" alt="Profile" className="mr-4" />
-                <div>
-                    <h2 className="text-lg font-bold">Admin Dashboard</h2>
-                    <p className="text-sm">Welcome, Nitish</p>
+            <Link href="/dashboard">
+                <div className="flex items-center mb-4">
+                    <Avatar src="/profile.jpg" alt="Profile" className="mr-4" />
+                    <div>
+                        <h2 className="text-lg font-bold">Admin Dashboard</h2>
+                        <p className="text-sm">{`${firstName} ${lastName}`}</p>
+                    </div>
                 </div>
-            </div>
+            </Link>
             <Divider />
             <List className="mt-4">
                 {/* <ListItem button>
@@ -92,7 +112,7 @@ const Home = ({ children }) => {
                             onClick={handleProfileMenuOpen}
                         >
                             <Avatar src="/profile.jpg" alt="Profile" />
-                            <span className="text-white ml-2">Welcome, Nitish</span>
+                            <span className="text-white ml-2">{`${firstName} ${lastName}`}</span>
                             <ArrowDropDownIcon className="text-white ml-1" /> {/* Dropdown Icon */}
                         </div>
                         <Menu
@@ -103,11 +123,11 @@ const Home = ({ children }) => {
                                 sx: {
                                     maxHeight: 200,
                                     width: '200px',
-                                    mt: 1, // Add some top margin to separate from the trigger
+                                    mt: 1,
                                 },
                             }}
                         >
-                            <Link href="/profile" passHref>
+                            <Link href="/dashboard/profile" passHref>
                                 <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
                             </Link>
                             <MenuItem onClick={handleLogout}>Logout</MenuItem>
