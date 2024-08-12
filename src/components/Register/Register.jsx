@@ -11,7 +11,9 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Snackbar, Alert } from "@mui/material";
+// import { Snackbar, Alert } from "@mui/material";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
@@ -51,16 +53,16 @@ export default function Register() {
       const response = await axios.post("/api/register", values);
 
       if (response.data.success === true) {
-        setMessage(response.data.message || "User registered successfully!");
-        setSeverity("success");
+        toast.success(response.data.message || "User registered successfully!");
+        //setSeverity("success");
         formRef.current.resetForm();
       } else {
-        setMessage(response.data.message || "Registration failed.");
-        setSeverity("error");
+        toast.error(response.data.message || "Registration failed.");
+       // setSeverity("error");
       }
     } catch (error) {
-      setMessage("An error occurred.");
-      setSeverity("error");
+      toast.error("An error occurred.");
+     // setSeverity("error");
     }
     setLoading(false);
     setOpen(true);
@@ -69,6 +71,7 @@ export default function Register() {
 
   return (
     <ThemeProvider theme={theme}>
+      <ToastContainer />
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -82,7 +85,7 @@ export default function Register() {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography component="h1" variant="h5" sx={{ mb: 4 }}>
             Register
           </Typography>
           <Formik
@@ -100,7 +103,7 @@ export default function Register() {
             {({ errors, touched, isSubmitting }) => (
               <Form noValidate>
                 <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6} mt={4}>
+                  <Grid item xs={12} sm={6}>
                     <Field name="firstName">
                       {({ field }) => (
                         <TextField
@@ -115,7 +118,7 @@ export default function Register() {
                       )}
                     </Field>
                   </Grid>
-                  <Grid item xs={12} sm={6} mt={4}>
+                  <Grid item xs={12} sm={6}>
                     <Field name="lastName">
                       {({ field }) => (
                         <TextField
@@ -220,7 +223,7 @@ export default function Register() {
           )}
         </Box>
 
-        <Box
+        {/* <Box
           sx={{
             position: "fixed",
             bottom: 16,
@@ -255,7 +258,7 @@ export default function Register() {
               {message}
             </Alert>
           </Snackbar>
-        </Box>
+        </Box> */}
       </Container>
     </ThemeProvider>
   );
