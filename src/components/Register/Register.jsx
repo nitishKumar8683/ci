@@ -16,6 +16,7 @@ import { useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
+import ClipLoader from "react-spinners/ClipLoader";
 
 const theme = createTheme();
 
@@ -37,6 +38,7 @@ export default function Register() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [severity, setSeverity] = useState("success");
+  const [loading, setLoading] = useState(false);
   const formRef = useRef(null);
 
   const handleClose = () => {
@@ -44,6 +46,7 @@ export default function Register() {
   };
 
   const handleSubmit = async (values, { setSubmitting }) => {
+    setLoading(true);
     try {
       const response = await axios.post("/api/register", values);
 
@@ -59,7 +62,7 @@ export default function Register() {
       setMessage("An error occurred.");
       setSeverity("error");
     }
-
+    setLoading(false);
     setOpen(true);
     setSubmitting(false);
   };
@@ -197,6 +200,24 @@ export default function Register() {
               </Form>
             )}
           </Formik>
+          {loading && (
+            <Box
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: "rgba(255, 255, 255, 0.7)",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: 1200,
+              }}
+            >
+              <ClipLoader color="#1976d2" size={50} />
+            </Box>
+          )}
         </Box>
 
         <Box
