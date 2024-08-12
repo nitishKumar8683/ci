@@ -4,7 +4,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
+import Link from "next/link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -195,9 +195,12 @@ export default function Register() {
                     </Link>
                   </Grid>
                   <Grid item>
-                    <Link href="#" variant="body2">
-                      Already have an account? Sign in
-                    </Link>
+                    <Typography variant="body2" align="center">
+                      Already have an account?
+                      <Link href="/login" style={{ textDecoration: "none" }}>
+                        <Button color="secondary"> Sign in</Button>
+                      </Link>
+                    </Typography>
                   </Grid>
                 </Grid>
               </Form>
