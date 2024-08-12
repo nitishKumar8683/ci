@@ -1,16 +1,44 @@
 "use client";
 import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemText, IconButton, Avatar, Divider } from '@mui/material';
+import {
+    Drawer,
+    List,
+    ListItem,
+    ListItemText,
+    IconButton,
+    Avatar,
+    Divider,
+    Menu,
+    MenuItem,
+    CssBaseline,
+    Toolbar,
+    AppBar
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import { CssBaseline, Toolbar, AppBar } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Link from "next/link";
 
 const Home = ({ children }) => {
     const [open, setOpen] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
 
     const toggleDrawer = () => {
         setOpen(!open);
+    };
+
+    const handleProfileMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
+
+
+    const handleLogout = () => {
+        // Handle logout action
+        handleMenuClose();
     };
 
     const sidebarContent = (
@@ -29,11 +57,11 @@ const Home = ({ children }) => {
             </div>
             <Divider />
             <List className="mt-4">
-                <ListItem button>
+                {/* <ListItem button>
                     <Link href="/profile">
                         <ListItemText primary="Profile" />
                     </Link>
-                </ListItem>
+                </ListItem> */}
                 <ListItem button>
                     <ListItemText primary="Users" />
                 </ListItem>
@@ -58,9 +86,32 @@ const Home = ({ children }) => {
                         <MenuIcon />
                     </IconButton>
                     <span className="text-white ml-4 text-lg flex-1">Bus Pass</span>
-                    <div className="flex items-center space-x-2">
-                        <Avatar src="/profile.jpg" alt="Profile" />
-                        <span className="text-white">Welcome, Nitish</span>
+                    <div className="flex items-center space-x-2 relative">
+                        <div
+                            className="flex items-center cursor-pointer"
+                            onClick={handleProfileMenuOpen}
+                        >
+                            <Avatar src="/profile.jpg" alt="Profile" />
+                            <span className="text-white ml-2">Welcome, Nitish</span>
+                            <ArrowDropDownIcon className="text-white ml-1" /> {/* Dropdown Icon */}
+                        </div>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleMenuClose}
+                            PaperProps={{
+                                sx: {
+                                    maxHeight: 200,
+                                    width: '200px',
+                                    mt: 1, // Add some top margin to separate from the trigger
+                                },
+                            }}
+                        >
+                            <Link href="/profile" passHref>
+                                <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+                            </Link>
+                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                        </Menu>
                     </div>
                 </Toolbar>
             </AppBar>
@@ -72,7 +123,7 @@ const Home = ({ children }) => {
             >
                 {sidebarContent}
             </Drawer>
-            <div className={`flex-1 transition-all duration-300 ${open ? 'ml-64' : 'ml-0'} bg-gray-100`}>
+            <div className={`flex-1 transition-all duration-300 ${open ? 'ml-64' : 'ml-0'}`}>
                 <main className="p-4 mt-16">
                     {children}
                 </main>
