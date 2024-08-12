@@ -215,7 +215,7 @@ export default function Register() {
                 zIndex: 1200,
               }}
             >
-              <ClipLoader color="#1976d2" size={50} />
+              <ClipLoader color="#4fa94d" loading={true} size={80} />
             </Box>
           )}
         </Box>
