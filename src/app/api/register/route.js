@@ -15,24 +15,27 @@ export async function POST(req) {
 
         const user = await User.findOne({ email: email });
         if (user) {
-            return NextResponse.json("User already exists", { status: 400 })
+            return NextResponse.json({
+                message: "User already exists",
+                status: 400 
+            })
         }
 
-        try {
-            const emailResponse = await mailSender(
-                email,
-                "Your Account Information",
-                emailTemplate(email, password),
-            );
-            console.log("Email sent successfully:", emailResponse.response);
-        } catch (error) {
-            console.error("Error occurred while sending email:", error);
-            return NextResponse.json({
-                success: false,
-                message: "Error occurred while sending email",
-                error: error.message,
-            });
-        }
+        // try {
+        //     const emailResponse = await mailSender(
+        //         email,
+        //         "Your Account Information",
+        //         emailTemplate(email, password),
+        //     );
+        //     console.log("Email sent successfully:", emailResponse.response);
+        // } catch (error) {
+        //     console.error("Error occurred while sending email:", error);
+        //     return NextResponse.json({
+        //         success: false,
+        //         message: "Error occurred while sending email",
+        //         error: error.message,
+        //     });
+        // }
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);

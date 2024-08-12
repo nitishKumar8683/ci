@@ -62,11 +62,7 @@ export default function Register() {
       if (response.data.success === true) {
         setMessage(response.data.message || "User registered successfully!");
         setSeverity("success");
-        firstName: "";
-        lastName: "";
-        email: "";
-        password: "";
-        phonenumber: data.get("");
+        formRef.current.reset();
       } else {
         setMessage(response.data.message || "Registration failed.");
         setSeverity("error");
@@ -101,6 +97,7 @@ export default function Register() {
             component="form"
             noValidate
             onSubmit={handleSubmit}
+            ref={formRef}
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
@@ -185,19 +182,31 @@ export default function Register() {
             bottom: 16,
             right: 16,
             width: "auto",
-            maxWidth: 360,
+            maxWidth: 500,
           }}
         >
           <Snackbar
             open={open}
             autoHideDuration={6000}
             onClose={handleClose}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
           >
             <Alert
               onClose={handleClose}
               severity={severity}
-              sx={{ width: "100%" }}
+              sx={{
+                width: "auto",
+                maxWidth: 400,
+                fontSize: "1rem",
+                lineHeight: "1.25rem",
+                fontWeight: "600",
+                letterSpacing: "0.01em",
+                backgroundColor: severity === "error" ? "#f44336" : "#4caf50",
+                color: "#ffffff",
+                borderRadius: "4px",
+                padding: "12px 16px",
+                boxShadow: 3,
+              }}
             >
               {message}
             </Alert>
