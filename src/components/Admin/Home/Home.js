@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react';
-import { Drawer, List, ListItem, ListItemText, IconButton } from '@mui/material';
+import { Drawer, List, ListItem, ListItemText, IconButton, Avatar, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import { CssBaseline, Toolbar, AppBar } from '@mui/material';
@@ -13,27 +13,30 @@ const Home = () => {
     };
 
     const sidebarContent = (
-        <div role="presentation" className="flex flex-col h-full p-4">
-           
+        <div role="presentation" className="flex flex-col h-full p-4 bg-gray-800 text-white">
             <div className="flex justify-end mb-4">
-               
                 <IconButton onClick={toggleDrawer}>
                     <CloseIcon />
                 </IconButton>
             </div>
-
-            <h1>Admin Dashboard</h1>
-        
-            <List>
+            <div className="flex items-center mb-4">
+                <Avatar src="/profile.jpg" alt="Profile" className="mr-4" />
+                <div>
+                    <h2 className="text-lg font-bold">Admin Dashboard</h2>
+                    <p className="text-sm">Welcome, Nitish</p>
+                </div>
+            </div>
+            <Divider />
+            <List className="mt-4">
                 <ListItem button>
-                    <ListItemText primary="Home" />
+                    <ListItemText primary="Profile" />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary="About" />
+                    <ListItemText primary="Users" />
                 </ListItem>
-                <ListItem button>
+                {/* <ListItem button>
                     <ListItemText primary="Contact" />
-                </ListItem>
+                </ListItem> */}
             </List>
         </div>
     );
@@ -51,14 +54,18 @@ const Home = () => {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <span className="text-white ml-4 text-lg">My Application</span>
+                    <span className="text-white ml-4 text-lg flex-1">Bus Pass</span>
+                    <div className="flex items-center space-x-2">
+                        <Avatar src="/profile.jpg" alt="Profile" />
+                        <span className="text-white">Welcome, Nitish</span>
+                    </div>
                 </Toolbar>
             </AppBar>
             <Drawer
                 anchor="left"
                 open={open}
                 onClose={toggleDrawer}
-                classes={{ paper: 'w-64 bg-gray-800 text-white' }} 
+                classes={{ paper: 'w-64' }}
             >
                 {sidebarContent}
             </Drawer>
