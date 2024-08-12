@@ -11,58 +11,46 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from "axios";
 import { Snackbar, Alert } from "@mui/material";
-import { useRef } from "react";
-
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import { useRef, useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import axios from "axios";
 
 const theme = createTheme();
 
+const validationSchema = Yup.object({
+  firstName: Yup.string().trim().required("First name is required."),
+  lastName: Yup.string().trim().required("Last name is required."),
+  email: Yup.string()
+    .trim()
+    .email("Invalid email address")
+    .required("Email is required."),
+  password: Yup.string().trim().required("Password is required."),
+  phonenumber: Yup.string()
+    .trim()
+    .matches(/^\d{10}$/, "Phone number must be exactly 10 digits.")
+    .required("Phone number is required."),
+});
+
 export default function Register() {
-  const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState("");
-  const [severity, setSeverity] = React.useState("success");
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [severity, setSeverity] = useState("success");
   const formRef = useRef(null);
 
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
 
+  const handleSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await axios.post("/api/register", {
-        firstName: data.get("firstName"),
-        lastName: data.get("lastName"),
-        email: data.get("email"),
-        password: data.get("password"),
-        phonenumber: data.get("phonenumber"),
-      });
-
-      console.log(response);
+      const response = await axios.post("/api/register", values);
 
       if (response.data.success === true) {
         setMessage(response.data.message || "User registered successfully!");
         setSeverity("success");
-        formRef.current.reset();
+        formRef.current.resetForm();
       } else {
         setMessage(response.data.message || "Registration failed.");
         setSeverity("error");
@@ -73,6 +61,7 @@ export default function Register() {
     }
 
     setOpen(true);
+    setSubmitting(false);
   };
 
   return (
@@ -93,87 +82,121 @@ export default function Register() {
           <Typography component="h1" variant="h5">
             Register
           </Typography>
-          <Box
-            component="form"
-            noValidate
+          <Formik
+            initialValues={{
+              firstName: "",
+              lastName: "",
+              email: "",
+              password: "",
+              phonenumber: "",
+            }}
+            validationSchema={validationSchema}
             onSubmit={handleSubmit}
-            ref={formRef}
-            sx={{ mt: 3 }}
+            innerRef={formRef}
           >
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
+            {({ errors, touched, isSubmitting }) => (
+              <Form noValidate>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6} mt={4}>
+                    <Field name="firstName">
+                      {({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="First Name"
+                          autoComplete="given-name"
+                          autoFocus
+                          error={touched.firstName && !!errors.firstName}
+                          helperText={<ErrorMessage name="firstName" />}
+                        />
+                      )}
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12} sm={6} mt={4}>
+                    <Field name="lastName">
+                      {({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Last Name"
+                          autoComplete="family-name"
+                          error={touched.lastName && !!errors.lastName}
+                          helperText={<ErrorMessage name="lastName" />}
+                        />
+                      )}
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Field name="email">
+                      {({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Email Address"
+                          autoComplete="email"
+                          error={touched.email && !!errors.email}
+                          helperText={<ErrorMessage name="email" />}
+                        />
+                      )}
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Field name="phonenumber">
+                      {({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Phone Number"
+                          error={touched.phonenumber && !!errors.phonenumber}
+                          helperText={<ErrorMessage name="phonenumber" />}
+                        />
+                      )}
+                    </Field>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Field name="password">
+                      {({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label="Password"
+                          type="password"
+                          autoComplete="new-password"
+                          error={touched.password && !!errors.password}
+                          helperText={<ErrorMessage name="password" />}
+                        />
+                      )}
+                    </Field>
+                  </Grid>
+                </Grid>
+                <Button
+                  type="submit"
                   fullWidth
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  name="phonenumber"
-                  required
-                  fullWidth
-                  id="phonenumber"
-                  label="Phone Number"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Register
-            </Button>
-            <Grid container justifyContent="space-between" alignItems="center">
-              <Grid item>
-                <Link href="/" variant="body2">
-                  Home
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  disabled={isSubmitting}
+                >
+                  Register
+                </Button>
+                <Grid
+                  container
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <Link href="/" variant="body2">
+                      Home
+                    </Link>
+                  </Grid>
+                  <Grid item>
+                    <Link href="#" variant="body2">
+                      Already have an account? Sign in
+                    </Link>
+                  </Grid>
+                </Grid>
+              </Form>
+            )}
+          </Formik>
         </Box>
 
         <Box
