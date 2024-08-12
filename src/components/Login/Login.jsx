@@ -15,7 +15,8 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css"
+import { useRouter } from "next/navigation";
 
 const theme = createTheme({
   palette: {
@@ -53,12 +54,14 @@ const validationSchema = Yup.object({
 });
 
 const Login = () => {
+     const router = useRouter();
   const handleSubmit = async (values, { setSubmitting }) => {
     const response = await axios.post("/api/login", values);
     try {
       if (response.data.success === true) {
         toast.success(response.data.message || "User logged in successfully");
         setSubmitting(false);
+        router.push("/dashboard");
       } else {
         toast.error(response.data.message || "Login failed");
         setSubmitting(false);
