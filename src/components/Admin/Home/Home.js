@@ -52,9 +52,15 @@ const Home = ({ children }) => {
     };
 
 
-    const handleLogout = () => {
-        handleMenuClose();
+    const handleLogout = async () => {
+        try {
+            await dispatch(logout()).unwrap();
+            router.push('/login');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
+
 
     const firstName = userAPIData?.firstName || 'Nitish';
     const lastName = userAPIData?.lastName || 'Kumar';

@@ -1,20 +1,20 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
-
+// Initial state for user slice
 const initialState = {
     userAPIData: null,
     isLoading: true,
     error: null,
 };
 
-
+// Async thunk for fetching user data
 export const fetchApiUsers = createAsyncThunk(
     "user/fetchApiUsers",
     async (_, { dispatch }) => {
         const response = await fetch("/api/me");
 
         if (response.status === 401) {
-            dispatch(logout());
+            dispatch(logout()); 
             throw new Error("Unauthorized. Redirecting to login.");
         }
 
@@ -26,19 +26,51 @@ export const fetchApiUsers = createAsyncThunk(
     }
 );
 
+// Async thunk for logging out
+export const logout = createAsyncThunk(
+    "user/logout",
+    async (_, { dispatch }) => {
+        const response = await fetch("/api/logout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Logout failed. Please try again.");
+        }
+
+        return response.json();
+    }
+);
+
+// Async thunk for getting a user
+export const getUser = createAsyncThunk(
+    "user/getUser",
+    async (_, { dispatch }) => {
+        const response = await fetch("/api/getUser");
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        return response.json();
+    }
+);
 
 const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        logout: (state) => {
+        // Synchronous logout reducer
+        clearUserData: (state) => {
             state.userAPIData = null;
             state.isLoading = false;
-            state.error = "You have been logged out.";
+            state.error = null;
         }
     },
     extraReducers: (builder) => {
         builder
+            // Handle fetchApiUsers actions
             .addCase(fetchApiUsers.pending, (state) => {
                 state.isLoading = true;
                 state.error = null;
@@ -50,9 +82,37 @@ const userSlice = createSlice({
             .addCase(fetchApiUsers.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.error.message;
+            })
+
+            // Handle logout actions
+            .addCase(logout.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(logout.fulfilled, (state) => {
+                state.isLoading = false;
+                state.userAPIData = null;
+            })
+            .addCase(logout.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.error.message;
+            })
+
+            // Handle getUser actions
+            .addCase(getUser.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.userAPIData = action.payload.usersData; 
+            })
+            .addCase(getUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.error.message;
             });
     },
 });
 
-export const { logout } = userSlice.actions;
+export const { clearUserData } = userSlice.actions;
 export default userSlice.reducer;
