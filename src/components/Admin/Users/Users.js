@@ -1,10 +1,10 @@
 "use client"
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserData, clearUserData } from '../../../app/redux/user/userSlice'; // Adjust the path to your userSlice
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { fetchUserData } from '../../../app/redux/user/userSlice';
 
 const Users = () => {
     const dispatch = useDispatch();
@@ -12,7 +12,6 @@ const Users = () => {
 
     useEffect(() => {
         dispatch(fetchUserData());
-        return () => dispatch(clearUserData());
     }, [dispatch]);
 
     if (isLoading) {
@@ -77,28 +76,5 @@ const Users = () => {
         </div>
     );
 };
-
-// Example function for getServerSideProps
-export async function getServerSideProps() {
-    try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/getUser`); 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        return {
-            props: {
-                initialUserData: data.usersData,
-            },
-        };
-    } catch (error) {
-        console.error('Failed to fetch data:', error);
-        return {
-            props: {
-                initialUserData: null,
-            },
-        };
-    }
-}
 
 export default Users;
