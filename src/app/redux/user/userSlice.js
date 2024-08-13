@@ -10,17 +10,21 @@ const initialState = {
 export const fetchUserData = createAsyncThunk(
     'userAll/fetchUserData',
     async () => {
-        const response = await fetch('/api/getUser' , {
-            cache : 'no-store'
-        });
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+        try {
+            const response = await fetch('/api/getUser', { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log("API Response Data:", data);
+            return data;
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            throw error; 
         }
-        const data = await response.json();
-        console.log("API Response Data:", data); 
-        return data.usersData; 
     }
 );
+
 
 const userSlice = createSlice({
     name: 'userAll', 
@@ -40,7 +44,7 @@ const userSlice = createSlice({
             })
             .addCase(fetchUserData.fulfilled, (state, action) => {
                 state.isLoading = false;
-                state.userAllAPIData = action.payload;
+                state.userAllAPIData = action.payload.usersData;
             })
             .addCase(fetchUserData.rejected, (state, action) => {
                 state.isLoading = false;
