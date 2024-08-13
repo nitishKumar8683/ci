@@ -51,7 +51,6 @@ const Home = ({ children }) => {
         setAnchorEl(null);
     };
 
-
     const handleLogout = async () => {
         try {
             await dispatch(logout()).unwrap();
@@ -61,9 +60,9 @@ const Home = ({ children }) => {
         }
     };
 
-
-    const firstName = userAPIData?.firstName || 'Nitish';
-    const lastName = userAPIData?.lastName || 'Kumar';
+    const firstName = userAPIData?.firstName || 'John';
+    const lastName = userAPIData?.lastName || 'Doe';
+    const role = userAPIData?.role || 'user'; 
 
     const sidebarContent = (
         <div role="presentation" className="flex flex-col h-full p-4 bg-gray-800 text-white">
@@ -76,26 +75,27 @@ const Home = ({ children }) => {
                 <div className="flex items-center mb-4">
                     <Avatar src="/profile.jpg" alt="Profile" className="mr-4" />
                     <div>
-                        <h2 className="text-lg font-bold">Admin Dashboard</h2>
+                        <h2 className="text-lg font-bold">{role === 'admin' ? "Admin Dashboard" : "User Dashboard"}</h2>
                         <p className="text-sm">{`${firstName} ${lastName}`}</p>
                     </div>
                 </div>
             </Link>
             <Divider />
             <List className="mt-4">
-                {/* <ListItem button>
-                    <Link href="/profile">
-                        <ListItemText primary="Profile" />
-                    </Link>
-                </ListItem> */}
-                <ListItem button>
-                    <Link href="/dashboard/user">
-                        <ListItemText primary="Users" />
-                    </Link>
-                </ListItem>
-                {/* <ListItem button>
-                    <ListItemText primary="Contact" />
-                </ListItem> */}
+                {role === 'admin' && (
+                    <ListItem button>
+                        <Link href="/dashboard/user">
+                            <ListItemText primary="Users" />
+                        </Link>
+                    </ListItem>
+                )}
+                {role === 'user' && (
+                    <ListItem button>
+                        <Link href="/dashboard/request">
+                            <ListItemText primary="Request" />
+                        </Link>
+                    </ListItem>
+                )}
             </List>
         </div>
     );

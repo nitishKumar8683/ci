@@ -1,7 +1,23 @@
-"use client"
-import React, { useEffect } from 'react';
+"use client";
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    CircularProgress,
+    Typography,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Button
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { fetchUserData } from '../../../app/redux/user/userSlice';
@@ -9,10 +25,28 @@ import { fetchUserData } from '../../../app/redux/user/userSlice';
 const Users = () => {
     const dispatch = useDispatch();
     const { userAllAPIData, isLoading, error } = useSelector((state) => state.userAll || {});
+    const [openModal, setOpenModal] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState(null);
 
     useEffect(() => {
         dispatch(fetchUserData());
     }, [dispatch]);
+
+    const handleOpenModal = (userId) => {
+        setSelectedUserId(userId);
+        setOpenModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setOpenModal(false);
+        setSelectedUserId(null);
+    };
+
+    const handleConfirmDelete = () => {
+        // Handle delete action here
+        alert("Deleted user with id:", selectedUserId);
+        handleCloseModal();
+    };
 
     if (isLoading) {
         return (
@@ -58,7 +92,7 @@ const Users = () => {
                                             <IconButton aria-label="edit" color="primary">
                                                 <EditIcon />
                                             </IconButton>
-                                            <IconButton aria-label="delete" color="error">
+                                            <IconButton aria-label="delete" color="error" onClick={() => handleOpenModal(row._id)}>
                                                 <DeleteIcon />
                                             </IconButton>
                                         </div>
@@ -73,6 +107,29 @@ const Users = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Confirmation Modal */}
+            <Dialog
+                open={openModal}
+                onClose={handleCloseModal}
+                aria-labelledby="confirm-delete-dialog-title"
+                aria-describedby="confirm-delete-dialog-description"
+            >
+                <DialogTitle id="confirm-delete-dialog-title">Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <Typography>
+                        Are you sure you want to delete this user? This action cannot be undone.
+                    </Typography>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseModal} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={handleConfirmDelete} color="error">
+                        Delete
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };
