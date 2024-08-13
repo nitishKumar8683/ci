@@ -10,7 +10,11 @@ const initialState = {
 export const fetchUserData = createAsyncThunk(
     'userAll/fetchUserData',
     async () => {
-        const response = await fetch('/api/getUser');
+        const response = await fetch('/api/getUser' , {
+            next : {
+                revalidate : 5000
+            }
+        });
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
