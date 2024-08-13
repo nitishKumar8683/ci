@@ -1,5 +1,4 @@
-// pages/users.js (or any other page file)
-
+"use client"
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserData, clearUserData } from '../path/to/your/userSlice'; // Adjust the path to your userSlice
