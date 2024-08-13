@@ -1,7 +1,7 @@
-import { getDataUser } from "@/helpers/getUserData";
+import { getDataUser } from "../../../helpers/getUserData";
 import { NextRequest, NextResponse } from "next/server";
-import User from "@/models/userModel";
-import { connect } from "@/db/dbConfig";
+import User from "../../../models/userModel";
+import { connect } from "../../../db/dbConfig"
 
 connect()
 

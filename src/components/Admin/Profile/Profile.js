@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
-import DefaultPage from "@/components/Admin/Home/Home";
+import DefaultPage from "../../../components/Admin/Home/Home";
 
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);

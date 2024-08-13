@@ -19,7 +19,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Link from "next/link";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchApiUsers, logout } from '@/app/redux/slice';
+import { fetchApiUsers, logout } from '../../../app/redux/slice';
 import { useRouter } from "next/navigation";
 
 const Home = ({ children }) => {
@@ -83,7 +83,9 @@ const Home = ({ children }) => {
                     </Link>
                 </ListItem> */}
                 <ListItem button>
-                    <ListItemText primary="Users" />
+                    <Link href="/dashboard/user">
+                        <ListItemText primary="Users" />
+                    </Link>
                 </ListItem>
                 {/* <ListItem button>
                     <ListItemText primary="Contact" />

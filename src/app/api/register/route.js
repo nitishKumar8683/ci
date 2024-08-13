@@ -1,9 +1,9 @@
-import User from "@/models/userModel"
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { connect } from "@/db/dbConfig";
-import mailSender from "@/helpers/mailSender";
-import emailTemplate from "@/helpers/template/emailTemplate";
+import User from "../../../models/userModel";
+import { connect } from "../../../db/dbConfig"
+import mailSender from "../../../helpers/mailSender";
+import emailTemplate from "../../../helpers/template/emailTemplate";
 
 connect()
 
