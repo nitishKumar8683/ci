@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUserData, clearUserData } from '../path/to/your/userSlice'; // Adjust the path to your userSlice
+import { fetchUserData, clearUserData } from '../../../app/redux/user/userSlice'; // Adjust the path to your userSlice
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
