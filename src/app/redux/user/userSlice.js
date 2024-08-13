@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 const initialState = {
-    userAllAPIData: null, // Changed to match your usage
+    userAllAPIData: null,
     isLoading: false,
     error: null,
 };
@@ -15,17 +15,23 @@ export const fetchUserData = createAsyncThunk(
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        console.log("API Response Data:", data); // Inspect response structure
-        return data.usersData; // Return only the usersData
+        console.log("API Response Data:", data);
+        return data.usersData;
     }
 );
 
 const userSlice = createSlice({
-    name: 'userAll', // Ensure this matches your slice name
+    name: 'userAll',
     initialState,
     reducers: {
         clearUserData: (state) => {
             state.userAllAPIData = null;
+            state.isLoading = false;
+            state.error = null;
+        },
+        // Action to initialize state with server-side fetched data
+        initializeUserData: (state, action) => {
+            state.userAllAPIData = action.payload;
             state.isLoading = false;
             state.error = null;
         },
@@ -47,5 +53,5 @@ const userSlice = createSlice({
     },
 });
 
-export const { clearUserData } = userSlice.actions;
+export const { clearUserData, initializeUserData } = userSlice.actions;
 export default userSlice.reducer;

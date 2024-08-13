@@ -1,17 +1,22 @@
-"use client"
+// pages/users.js (or any other page file)
+
+"use client";
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { fetchUserData } from '../../../app/redux/user/userSlice';
+import { fetchUserData, clearUserData } from '../../../app/redux/user/userSlice'; // Adjust the path to your userSlice
 
-const Users = () => {
+const Users = ({ initialUserData }) => {
     const dispatch = useDispatch();
     const { userAllAPIData, isLoading, error } = useSelector((state) => state.userAll || {});
 
     useEffect(() => {
+        // Dispatch action to populate Redux store with initial data
         dispatch(fetchUserData());
+        // Clear user data on component unmount (if needed)
+        return () => dispatch(clearUserData());
     }, [dispatch]);
 
     if (isLoading) {
@@ -76,5 +81,29 @@ const Users = () => {
         </div>
     );
 };
+
+// Fetch data on each request
+export async function getServerSideProps() {
+    try {
+        const response = await fetch('api/getUser'); // Update the URL as needed
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        return {
+            props: {
+                initialUserData: data.usersData,
+            },
+        };
+    } catch (error) {
+        console.error('Failed to fetch data:', error);
+        return {
+            props: {
+                initialUserData: null,
+            },
+        };
+    }
+}
 
 export default Users;
