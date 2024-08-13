@@ -12,9 +12,11 @@ const Users = () => {
 
     useEffect(() => {
         dispatch(getUser());
-    }, [dispatch , getUser]);
+    }, [dispatch]);
 
-
+    useEffect(() => {
+        console.log(getUser)
+    }, [getUser]);
 
     if (isLoading) {
         return (
