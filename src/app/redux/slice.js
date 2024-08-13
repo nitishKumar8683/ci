@@ -46,23 +46,24 @@ export const logout = createAsyncThunk(
 );
 
 // Async thunk for getting a user
-export const getUser = createAsyncThunk(
-    "user/getUser",
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await fetch("/api/getUser");
+// export const getUser = createAsyncThunk(
+//     "user/getUser",
+//     async (_, { rejectWithValue }) => {
+//         try {
+//             const response = await fetch("/api/getUser");
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
+//             if (!response.ok) {
+//                 throw new Error("Network response was not ok");
+//             }
 
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
+//             const data = await response.json();
+//             console.log('API Response:', data);
+//             return data;
+//         } catch (error) {
+//             return rejectWithValue(error.message);
+//         }
+//     }
+// );
 
 const userSlice = createSlice({
     name: "user",
@@ -106,18 +107,18 @@ const userSlice = createSlice({
             })
 
             // Handle getUser actions
-            .addCase(getUser.pending, (state) => {
-                state.isLoading = true;
-                state.error = null;
-            })
-            .addCase(getUser.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.userAPIData = action.payload.usersData; 
-            })
-            .addCase(getUser.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.error.message;
-            });
+            // .addCase(getUser.pending, (state) => {
+            //     state.isLoading = true;
+            //     state.error = null;
+            // })
+            // .addCase(getUser.fulfilled, (state, action) => {
+            //     state.isLoading = false;
+            //     state.userAPIData = action.payload.usersData; 
+            // })
+            // .addCase(getUser.rejected, (state, action) => {
+            //     state.isLoading = false;
+            //     state.error = action.error.message;
+            // });
     },
 });
 

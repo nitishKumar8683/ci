@@ -1,17 +1,17 @@
-"use client";
+"use client"
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getUser } from '../../../app/redux/slice'; // Update import path accordingly
+import { fetchUserData } from '../../../app/redux/user/userSlice';
 
 const Users = () => {
     const dispatch = useDispatch();
-    const { userAPIData, isLoading, error } = useSelector((state) => state.user);
+    const { userAllAPIData, isLoading, error } = useSelector((state) => state.userAll || {});
 
     useEffect(() => {
-        dispatch(getUser());
+        dispatch(fetchUserData());
     }, [dispatch]);
 
     if (isLoading) {
@@ -46,12 +46,12 @@ const Users = () => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {Array.isArray(userAPIData) && userAPIData.length > 0 ? (
-                            userAPIData.map((row) => (
-                                <TableRow key={row.id} className="hover:bg-gray-50 transition-colors duration-300">
+                        {Array.isArray(userAllAPIData) && userAllAPIData.length > 0 ? (
+                            userAllAPIData.map((row) => (
+                                <TableRow key={row._id} className="hover:bg-gray-50 transition-colors duration-300">
                                     <TableCell className="px-6 py-4">{row.firstName}</TableCell>
                                     <TableCell className="px-6 py-4">{row.lastName}</TableCell>
-                                    <TableCell className="px-6 py-4">{row.phoneNumber}</TableCell>
+                                    <TableCell className="px-6 py-4">{row.phonenumber || 'N/A'}</TableCell>
                                     <TableCell className="px-6 py-4">{row.email}</TableCell>
                                     <TableCell className="px-6 py-4">
                                         <div className="flex justify-start items-center space-x-2">
