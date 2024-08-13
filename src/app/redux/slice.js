@@ -48,12 +48,19 @@ export const logout = createAsyncThunk(
 // Async thunk for getting a user
 export const getUser = createAsyncThunk(
     "user/getUser",
-    async (_, { dispatch }) => {
-        const response = await fetch("/api/getUser");
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await fetch("/api/getUser");
+
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.message);
         }
-        return response.json();
     }
 );
 

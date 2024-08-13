@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, CircularProgress, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getUser } from '../../../app/redux/slice'; // Update the import path accordingly
+import { getUser } from '../../../app/redux/slice'; // Update import path accordingly
 
 const Users = () => {
     const dispatch = useDispatch();
@@ -13,10 +13,6 @@ const Users = () => {
     useEffect(() => {
         dispatch(getUser());
     }, [dispatch]);
-
-    useEffect(() => {
-        console.log(getUser)
-    }, [getUser]);
 
     if (isLoading) {
         return (
@@ -52,10 +48,10 @@ const Users = () => {
                     <TableBody>
                         {Array.isArray(userAPIData) && userAPIData.length > 0 ? (
                             userAPIData.map((row) => (
-                                <TableRow key={row.public_id || row.email} className="hover:bg-gray-50 transition-colors duration-300">
+                                <TableRow key={row.id} className="hover:bg-gray-50 transition-colors duration-300">
                                     <TableCell className="px-6 py-4">{row.firstName}</TableCell>
                                     <TableCell className="px-6 py-4">{row.lastName}</TableCell>
-                                    <TableCell className="px-6 py-4">{row.phonenumber}</TableCell>
+                                    <TableCell className="px-6 py-4">{row.phoneNumber}</TableCell>
                                     <TableCell className="px-6 py-4">{row.email}</TableCell>
                                     <TableCell className="px-6 py-4">
                                         <div className="flex justify-start items-center space-x-2">
