@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Avatar,
     Typography,
@@ -11,49 +11,147 @@ import {
     IconButton,
     Tooltip,
     TextField,
+    CircularProgress,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import CameraAltIcon from '@mui/icons-material/CameraAlt';
 import DefaultPage from "../../../components/Admin/Home/Home";
+import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchApiUsers } from '../../../app/redux/slice';
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { BeatLoader } from "react-spinners";
+
+// Validation schema excluding address
+const validationSchema = Yup.object({
+    firstName: Yup.string().required('Name is required'),
+    lastName: Yup.string().required('Name is required'),
+    email: Yup.string().email('Invalid email address').required('Email is required'),
+    phonenumber: Yup.string().matches(/^\+?\d+$/, 'Invalid phone number').required('Phone number is required'),
+});
 
 const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
-    const [user, setUser] = useState({
-        name: 'Nitish Kumar',
-        email: 'nitish@example.com',
-        phone: '+1234567890',
-        address: '123 Main Street, City, Country',
-        profileImage: '/profile.jpg', 
-    });
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [isLoadingData, setIsLoadingData] = useState(true); // Track data loading
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const { userAPIData, isLoading } = useSelector((state) => state.user || {});
 
-    const handleEditToggle = () => {
-        setIsEditing(!isEditing);
-    };
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await dispatch(fetchApiUsers()).unwrap();
+            } catch (err) {
+                if (err.message === "Unauthorized. Redirecting to login.") {
+                    router.push('/login');
+                }
+            } finally {
+                setIsLoadingData(false); // Stop loading when data fetch is complete
+            }
+        };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUser((prev) => ({ ...prev, [name]: value }));
-    };
+        fetchData();
+    }, [dispatch, router]);
+
+    useEffect(() => {
+        if (userAPIData) {
+            setUser(userAPIData);
+        }
+    }, [userAPIData]);
 
     const handleImageChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (upload) => {
-                setUser((prev) => ({ ...prev, profileImage: upload.target.result }));
-            };
-            reader.readAsDataURL(e.target.files[0]);
+            const file = e.target.files[0];
+            if (file.size > 10 * 1024 * 1024) {
+                toast.error('File size exceeds 10 MB limit.');
+                return;
+            }
+            setUser((prev) => ({ ...prev, profileImage: file }));
         }
     };
 
+    const handleSave = async (values) => {
+        setLoading(true);
+        try {
+            const response = await fetch(`/api/profileUpdate/${user._id}`, {
+                method: 'PUT',
+                body: createFormData(values),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to update profile');
+            }
+
+            const result = await response.json();
+            if (result.status === 200) {
+                toast.success(result.msg || 'Profile updated successfully');
+                setIsEditing(false);
+                setError(null);
+                setUser(prev => ({ ...prev, ...result.updateMe }));
+            } else {
+                toast.error(result.msg || 'Profile update failed');
+                setError(result.error || 'Failed to update profile');
+            }
+        } catch (err) {
+            setError(err.message || 'An unexpected error occurred');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const createFormData = (values) => {
+        const formData = new FormData();
+        formData.append("firstName", values.firstName);
+        formData.append("lastName", values.lastName);
+        formData.append("phonenumber", values.phonenumber);
+
+        if (user.profileImage) {
+            formData.append("image", user.profileImage);
+        }
+
+        return formData;
+    };
+
+    if (isLoadingData) {
+        return (
+            <DefaultPage>
+                <Box
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    minHeight="100vh"
+                    position="fixed"
+                    top={0}
+                    left={0}
+                    right={0}
+                    bottom={0}
+                    bgcolor="rgba(255, 255, 255, 0.8)" // Slightly transparent background
+                    zIndex={1200} // Ensure it is above other content
+                >
+                    <BeatLoader color="#1976d2" />
+                </Box>
+            </DefaultPage>
+        );
+    }
+
+    if (!user) return null;
+
     return (
         <DefaultPage>
-            <Box sx={{ padding: 5, maxWidth: 600, margin: 'auto', backgroundColor: '#f0f4f8'  }}>
+            <ToastContainer />
+            <Box sx={{ padding: 5, maxWidth: 600, margin: 'auto', backgroundColor: '#f0f4f8', position: 'relative' }}>
                 <Paper elevation={5} sx={{ padding: 4, borderRadius: 2, backgroundColor: '#ffffff' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">
                         <Box position="relative">
                             <Avatar
-                                src={user.profileImage}
-                                alt={user.name}
+                                src={user.image_url}
+                                alt={user.firstName}
                                 sx={{
                                     width: 120,
                                     height: 120,
@@ -87,65 +185,92 @@ const Profile = () => {
                                 </IconButton>
                             )}
                         </Box>
-                        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
-                            {user.name}
-                        </Typography>
-                        <Typography variant="body2" sx={{ mb: 1, color: 'gray', textAlign: 'center' }}>
-                            {user.bio}
-                        </Typography>
 
-                        {/* Conditional rendering of fields */}
                         {isEditing ? (
-                            <>
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Name"
-                                    name="name"
-                                    value={user.name}
-                                    onChange={handleChange}
-                                    sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Email"
-                                    name="email"
-                                    value={user.email}
-                                    onChange={handleChange}
-                                    sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Phone"
-                                    name="phone"
-                                    value={user.phone}
-                                    onChange={handleChange}
-                                    sx={{ mb: 2 }}
-                                />
-                                <TextField
-                                    fullWidth
-                                    variant="outlined"
-                                    label="Address"
-                                    name="address"
-                                    value={user.address}
-                                    onChange={handleChange}
-                                    sx={{ mb: 2 }}
-                                />
-                            </>
+                            <Formik
+                                initialValues={{
+                                    firstName: user.firstName || '',
+                                    lastName: user.lastName || '',
+                                    email: user.email || '',
+                                    phonenumber: user.phonenumber || ''
+                                }}
+                                validationSchema={validationSchema}
+                                onSubmit={handleSave}
+                            >
+                                {({ errors, touched }) => (
+                                    <Form>
+                                        <Field
+                                            as={TextField}
+                                            fullWidth
+                                            variant="outlined"
+                                            label="First Name"
+                                            name="firstName"
+                                            error={touched.firstName && Boolean(errors.firstName)}
+                                            helperText={touched.firstName && errors.firstName}
+                                            sx={{ mb: 2 }}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            fullWidth
+                                            variant="outlined"
+                                            label="Last Name"
+                                            name="lastName"
+                                            error={touched.lastName && Boolean(errors.lastName)}
+                                            helperText={touched.lastName && errors.lastName}
+                                            sx={{ mb: 2 }}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            fullWidth
+                                            variant="outlined"
+                                            label="Email"
+                                            name="email"
+                                            error={touched.email && Boolean(errors.email)}
+                                            helperText={touched.email && errors.email}
+                                            sx={{ mb: 2 }}
+                                        />
+                                        <Field
+                                            as={TextField}
+                                            fullWidth
+                                            variant="outlined"
+                                            label="Phone"
+                                            name="phonenumber"
+                                            error={touched.phonenumber && Boolean(errors.phonenumber)}
+                                            helperText={touched.phonenumber && errors.phonenumber}
+                                            sx={{ mb: 2 }}
+                                        />
+                                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                                            <Box display="flex" gap={2}>
+                                                <Button
+                                                    type="submit"
+                                                    variant="contained"
+                                                    color="primary"
+                                                    disabled={loading}
+                                                    sx={{
+                                                        '&:hover': { backgroundColor: '#1565c0', transform: 'scale(1.05)' },
+                                                        borderRadius: '20px',
+                                                    }}
+                                                >
+                                                    {loading ? <CircularProgress size={24} /> : 'Save Changes'}
+                                                </Button>
+                                            </Box>
+                                        </Box>
+                                    </Form>
+                                )}
+                            </Formik>
+
                         ) : (
-                            <>
-                                <Typography variant="body1" sx={{ mb: 1 }}>
-                                    <strong>Email:</strong> {user.email}
+                            <Box>
+                                <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 1 }}>
+                                    {`${user.firstName} ${user.lastName}`}
                                 </Typography>
                                 <Typography variant="body1" sx={{ mb: 1 }}>
-                                    <strong>Phone:</strong> {user.phone}
+                                    <strong>Email: </strong> {user.email}
                                 </Typography>
                                 <Typography variant="body1" sx={{ mb: 1 }}>
-                                    <strong>Address:</strong> {user.address}
+                                    <strong>Phone: </strong> {user.phonenumber}
                                 </Typography>
-                            </>
+                            </Box>
                         )}
                     </Box>
                     <Divider sx={{ my: 2 }} />
@@ -153,7 +278,7 @@ const Profile = () => {
                         <Grid item xs={6}>
                             <Tooltip title={isEditing ? "Cancel editing" : "Edit your profile"} arrow>
                                 <IconButton
-                                    onClick={handleEditToggle}
+                                    onClick={() => setIsEditing(!isEditing)}
                                     sx={{
                                         width: '100%',
                                         backgroundColor: isEditing ? '#e57373' : '#1976d2',
@@ -169,20 +294,10 @@ const Profile = () => {
                             </Tooltip>
                         </Grid>
                         <Grid item xs={6}>
-                            {isEditing && (
-                                <Button
-                                    variant="contained"
-                                    fullWidth
-                                    onClick={() => {
-                                        setIsEditing(false);
-                                    }}
-                                    sx={{
-                                        '&:hover': { backgroundColor: '#1565c0', transform: 'scale(1.05)' },
-                                        borderRadius: '20px',
-                                    }}
-                                >
-                                    Save Changes
-                                </Button>
+                            {error && (
+                                <Typography variant="body2" color="error" sx={{ mb: 2 }}>
+                                    {error}
+                                </Typography>
                             )}
                         </Grid>
                     </Grid>

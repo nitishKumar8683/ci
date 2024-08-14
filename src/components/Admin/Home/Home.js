@@ -72,6 +72,7 @@ const Home = ({ children }) => {
     const firstName = userAPIData?.firstName || 'John';
     const lastName = userAPIData?.lastName || 'Doe';
     const role = userAPIData?.role || 'user'; 
+    const image = userAPIData?.image_url || 'user'; 
 
     const sidebarContent = (
         <div role="presentation" className="flex flex-col h-full p-4 bg-gray-800 text-white">
@@ -82,7 +83,7 @@ const Home = ({ children }) => {
             </div>
             <Link href="/dashboard">
                 <div className="flex items-center mb-4">
-                    <Avatar src="/profile.jpg" alt="Profile" className="mr-4" />
+                    <Avatar src={image} alt="Profile" className="mr-4" />
                     <div>
                         <h2 className="text-lg font-bold">{role === 'admin' ? "Admin Dashboard" : "User Dashboard"}</h2>
                         <p className="text-sm">{`${firstName} ${lastName}`}</p>
@@ -100,7 +101,7 @@ const Home = ({ children }) => {
                 )}
                 {role === 'user' && (
                     <ListItem button>
-                        <Link href="/dashboard/request">
+                        <Link href="/dashboard/request-user">
                             <ListItemText primary="Request" />
                         </Link>
                     </ListItem>
@@ -131,7 +132,7 @@ const Home = ({ children }) => {
                                 className="flex items-center cursor-pointer"
                                 onClick={handleProfileMenuOpen}
                             >
-                                <Avatar src="/profile.jpg" alt="Profile" />
+                                <Avatar src={image} alt="Profile" />
                                 <span className="text-white ml-2">{`${firstName} ${lastName}`}</span>
                                 <ArrowDropDownIcon className="text-white ml-1" /> {/* Dropdown Icon */}
                             </div>

@@ -59,6 +59,7 @@ const Users = () => {
             setDeleteLoading(true);
             try {
                 const response = await axios.delete(`/api/deleteUser/${selectedUserId}`);
+                console.log(response.status);
                 if (response.status === 200) {
                     toast.success(response.data.message);
                     setTimeout(() => {
@@ -72,6 +73,7 @@ const Users = () => {
                 toast.error("Failed to delete user. Please try again.");
             }
             setDeleteLoading(false);
+            handleCloseModal();
         }
     };
 
@@ -100,6 +102,7 @@ const Users = () => {
         setUpdateLoading(true);
         try {
             const response = await axios.put(`/api/updateUser/${selectedUserId}`, values);
+            console.log(response);
             if (response.data.status === 201) {
                 toast.success(response.data.message);
                 setTimeout(() => {
@@ -134,188 +137,190 @@ const Users = () => {
     return (
         <>
             <ToastContainer />
-            <div className="relative p-6 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
-                {/* Loader Overlay */}
-                {(deleteLoading || updateLoading) && (
-                    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-                        <PuffLoader color="#ffffff" size={60} />
-                    </div>
-                )}
-                {/* Content */}
-                <div className={`relative ${deleteLoading || updateLoading ? 'filter blur-sm' : ''}`}>
-                    <TableContainer component={Paper} className="shadow-lg border border-gray-200 rounded-lg overflow-hidden">
-                        <Table>
-                            <TableHead>
-                                <TableRow className="bg-gray-100 border-b border-gray-200">
-                                    <TableCell className="font-bold text-gray-700 px-6 py-3">First Name</TableCell>
-                                    <TableCell className="font-bold text-gray-700 px-6 py-3">Last Name</TableCell>
-                                    <TableCell className="font-bold text-gray-700 px-6 py-3">Phone Number</TableCell>
-                                    <TableCell className="font-bold text-gray-700 px-6 py-3">Email</TableCell>
-                                    <TableCell className="font-bold text-gray-700 px-6 py-3">Actions</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {Array.isArray(userAllAPIData) && userAllAPIData.length > 0 ? (
-                                    userAllAPIData.map((row) => (
-                                        <TableRow key={row._id} className="hover:bg-gray-50 transition-colors duration-300">
-                                            <TableCell className="px-6 py-4">{row.firstName}</TableCell>
-                                            <TableCell className="px-6 py-4">{row.lastName}</TableCell>
-                                            <TableCell className="px-6 py-4">{row.phonenumber || 'N/A'}</TableCell>
-                                            <TableCell className="px-6 py-4">{row.email}</TableCell>
-                                            <TableCell className="px-6 py-4">
-                                                <div className="flex justify-start items-center space-x-2">
-                                                    <IconButton
-                                                        aria-label="edit"
-                                                        color="primary"
-                                                        onClick={() => handleOpenEditModal(row)}
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                    <IconButton
-                                                        aria-label="delete"
-                                                        color="error"
-                                                        onClick={() => handleOpenModal(row._id)}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={5} className="text-center">No data available</TableCell>
+            <div className="p-6 max-w-6xl mx-auto bg-gray-50 rounded-lg shadow-md">
+                <TableContainer component={Paper} className="shadow-lg border border-gray-200 rounded-lg overflow-hidden">
+                    <Table>
+                        <TableHead>
+                            <TableRow className="bg-gray-100 border-b border-gray-200">
+                                <TableCell className="font-bold text-gray-700 px-6 py-3">First Name</TableCell>
+                                <TableCell className="font-bold text-gray-700 px-6 py-3">Last Name</TableCell>
+                                <TableCell className="font-bold text-gray-700 px-6 py-3">Phone Number</TableCell>
+                                <TableCell className="font-bold text-gray-700 px-6 py-3">Email</TableCell>
+                                <TableCell className="font-bold text-gray-700 px-6 py-3">Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {Array.isArray(userAllAPIData) && userAllAPIData.length > 0 ? (
+                                userAllAPIData.map((row) => (
+                                    <TableRow key={row._id} className="hover:bg-gray-50 transition-colors duration-300">
+                                        <TableCell className="px-6 py-4">{row.firstName}</TableCell>
+                                        <TableCell className="px-6 py-4">{row.lastName}</TableCell>
+                                        <TableCell className="px-6 py-4">{row.phonenumber || 'N/A'}</TableCell>
+                                        <TableCell className="px-6 py-4">{row.email}</TableCell>
+                                        <TableCell className="px-6 py-4">
+                                            <div className="flex justify-start items-center space-x-2">
+                                                <IconButton
+                                                    aria-label="edit"
+                                                    color="primary"
+                                                    onClick={() => handleOpenEditModal(row)}
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                                <IconButton
+                                                    aria-label="delete"
+                                                    color="error"
+                                                    onClick={() => handleOpenModal(row._id)}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </div>
+                                        </TableCell>
                                     </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={5} className="text-center">No data available</TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
 
-                    {/* Confirmation Modal */}
-                    <Dialog
-                        open={openModal}
-                        onClose={handleCloseModal}
-                        aria-labelledby="confirm-delete-dialog-title"
-                        aria-describedby="confirm-delete-dialog-description"
-                    >
-                        <DialogTitle id="confirm-delete-dialog-title">Confirm Delete</DialogTitle>
-                        <DialogContent>
-                            <Typography>
-                                Are you sure you want to delete this user? This action cannot be undone.
-                            </Typography>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={handleCloseModal} color="primary">Cancel</Button>
-                            <Button onClick={handleConfirmDelete} color="error">Delete</Button>
-                        </DialogActions>
-                    </Dialog>
+                {/* Confirmation Modal */}
+                <Dialog
+                    open={openModal}
+                    onClose={handleCloseModal}
+                    aria-labelledby="confirm-delete-dialog-title"
+                    aria-describedby="confirm-delete-dialog-description"
+                >
+                    <DialogTitle id="confirm-delete-dialog-title">Confirm Delete</DialogTitle>
+                    <DialogContent>
+                        <Typography>
+                            Are you sure you want to delete this user? This action cannot be undone.
+                        </Typography>
+                        {deleteLoading && (
+                            <div className="flex justify-center items-center min-h-[100px]">
+                                <PuffLoader color="#007bff" loading={deleteLoading} size={60} />
+                            </div>
+                        )}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseModal} color="primary">Cancel</Button>
+                        <Button onClick={handleConfirmDelete} color="error">Delete</Button>
+                    </DialogActions>
+                </Dialog>
 
-                    {/* Edit User Modal */}
-                    <Dialog
-                        open={editModalOpen}
-                        onClose={handleCloseEditModal}
-                        aria-labelledby="edit-user-dialog-title"
-                        aria-describedby="edit-user-dialog-description"
-                        maxWidth="sm"
-                        fullWidth
+                {/* Edit User Modal */}
+                <Dialog
+                    open={editModalOpen}
+                    onClose={handleCloseEditModal}
+                    aria-labelledby="edit-user-dialog-title"
+                    aria-describedby="edit-user-dialog-description"
+                    maxWidth="sm"
+                    fullWidth
+                >
+                    <DialogTitle
+                        id="edit-user-dialog-title"
+                        sx={{ fontWeight: 'bold', fontSize: '1.25rem', textAlign: 'center' }}
                     >
-                        <DialogTitle
-                            id="edit-user-dialog-title"
-                            sx={{ fontWeight: 'bold', fontSize: '1.25rem', textAlign: 'center' }}
+                        Edit User
+                    </DialogTitle>
+                    <DialogContent>
+                        <Formik
+                            initialValues={initialValues}
+                            validationSchema={validationSchema}
+                            onSubmit={handleEditSubmit}
                         >
-                            Edit User
-                        </DialogTitle>
-                        <DialogContent>
-                            <Formik
-                                initialValues={initialValues}
-                                validationSchema={validationSchema}
-                                onSubmit={handleEditSubmit}
-                            >
-                                {({ errors, touched, isSubmitting }) => (
-                                    <Form>
-                                        <div className="space-y-4">
-                                            <div className="mb-4">
-                                                <Field
-                                                    as={TextField}
-                                                    label="First Name"
-                                                    name="firstName"
-                                                    fullWidth
-                                                    margin="normal"
-                                                    variant="outlined"
-                                                    placeholder="Enter first name"
-                                                    helperText={<ErrorMessage name="firstName" />}
-                                                    error={Boolean(errors.firstName)}
-                                                />
-                                            </div>
-                                            <div className="mb-4">
-                                                <Field
-                                                    as={TextField}
-                                                    label="Last Name"
-                                                    name="lastName"
-                                                    fullWidth
-                                                    margin="normal"
-                                                    variant="outlined"
-                                                    placeholder="Enter last name"
-                                                    helperText={<ErrorMessage name="lastName" />}
-                                                    error={Boolean(errors.lastName)}
-                                                />
-                                            </div>
-                                            <div className="mb-4">
-                                                <Field
-                                                    as={TextField}
-                                                    label="Phone Number"
-                                                    name="phonenumber"
-                                                    fullWidth
-                                                    margin="normal"
-                                                    variant="outlined"
-                                                    placeholder="Enter phone number"
-                                                    helperText={<ErrorMessage name="phonenumber" />}
-                                                    error={Boolean(errors.phonenumber)}
-                                                    inputProps={{ pattern: "[0-9]{10}", title: "Phone number should be 10 digits" }}
-                                                />
-                                            </div>
-                                            <div className="mb-4">
-                                                <Field
-                                                    as={TextField}
-                                                    label="Email"
-                                                    name="email"
-                                                    type="email"
-                                                    fullWidth
-                                                    margin="normal"
-                                                    variant="outlined"
-                                                    placeholder="Enter email"
-                                                    helperText={<ErrorMessage name="email" />}
-                                                    error={Boolean(errors.email)}
-                                                />
-                                            </div>
-                                        </div>
-                                        <DialogActions
-                                            sx={{ justifyContent: 'end', paddingBottom: '16px' }}
-                                        >
-                                            <Button
-                                                type="button"
-                                                onClick={handleCloseEditModal}
-                                                color="secondary"
+                            {({ errors, touched, isSubmitting }) => (
+                                <Form>
+                                    <div className="space-y-4">
+                                        <div className="mb-4">
+                                            <Field
+                                                as={TextField}
+                                                label="First Name"
+                                                name="firstName"
+                                                fullWidth
+                                                margin="normal"
                                                 variant="outlined"
-                                                sx={{ marginRight: '8px' }}
-                                            >
-                                                Cancel
-                                            </Button>
-                                            <Button
-                                                type="submit"
-                                                color="primary"
-                                                variant="contained"
-                                                disabled={isSubmitting}
-                                            >
-                                                Save
-                                            </Button>
-                                        </DialogActions>
-                                    </Form>
-                                )}
-                            </Formik>
-                        </DialogContent>
-                    </Dialog>
-                </div>
+                                                placeholder="Enter first name"
+                                                helperText={<ErrorMessage name="firstName" />}
+                                                error={Boolean(errors.firstName)}
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <Field
+                                                as={TextField}
+                                                label="Last Name"
+                                                name="lastName"
+                                                fullWidth
+                                                margin="normal"
+                                                variant="outlined"
+                                                placeholder="Enter last name"
+                                                helperText={<ErrorMessage name="lastName" />}
+                                                error={Boolean(errors.lastName)}
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <Field
+                                                as={TextField}
+                                                label="Phone Number"
+                                                name="phonenumber"
+                                                fullWidth
+                                                margin="normal"
+                                                variant="outlined"
+                                                placeholder="Enter phone number"
+                                                helperText={<ErrorMessage name="phonenumber" />}
+                                                error={Boolean(errors.phonenumber)}
+                                                inputProps={{ pattern: "[0-9]{10}", title: "Phone number should be 10 digits" }}
+                                            />
+                                        </div>
+                                        <div className="mb-4">
+                                            <Field
+                                                as={TextField}
+                                                label="Email"
+                                                name="email"
+                                                type="email"
+                                                fullWidth
+                                                margin="normal"
+                                                variant="outlined"
+                                                placeholder="Enter email"
+                                                helperText={<ErrorMessage name="email" />}
+                                                error={Boolean(errors.email)}
+                                            />
+                                        </div>
+                                    </div>
+                                    <DialogActions
+                                        sx={{ justifyContent: 'end', paddingBottom: '16px' }}
+                                    >
+                                        <Button
+                                            type="button"
+                                            onClick={handleCloseEditModal}
+                                            color="secondary"
+                                            variant="outlined"
+                                            sx={{ marginRight: '8px' }}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button
+                                            type="submit"
+                                            color="primary"
+                                            variant="contained"
+                                            disabled={isSubmitting}
+                                        >
+                                            {updateLoading ? (
+                                                <div className="flex justify-center items-center">
+                                                    <PuffLoader color="#ffffff" loading={updateLoading} size={24} />
+                                                </div>
+                                            ) : (
+                                                'Save'
+                                            )}
+                                        </Button>
+                                    </DialogActions>
+                                </Form>
+                            )}
+                        </Formik>
+                    </DialogContent>
+                </Dialog>
             </div>
         </>
     );
