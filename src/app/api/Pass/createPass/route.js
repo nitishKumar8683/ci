@@ -30,6 +30,8 @@ export async function POST(req) {
             where,
             days,
             busType,
+            isDelete : "",
+            status : "Pending",
             createdAt: new Date()
         });
 

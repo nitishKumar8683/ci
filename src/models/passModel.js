@@ -27,6 +27,14 @@ const passSchema = new mongoose.Schema({
         enum: ['Basic', 'Standard', 'Premium'],
         required: true,
     },
+    isDelete: {
+        type: String,
+        default: "",
+    },
+    status: {
+        type: String,
+        default: "",
+    },
     createdAt: {
         type: Date,
         default: Date.now, 

@@ -102,7 +102,7 @@ const Home = ({ children }) => {
                 {role === 'user' && (
                     <ListItem button>
                         <Link href="/dashboard/request-user">
-                            <ListItemText primary="Request" />
+                            <ListItemText primary="Request Pass" />
                         </Link>
                     </ListItem>
                 )}

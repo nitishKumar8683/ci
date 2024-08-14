@@ -1,6 +1,6 @@
 import { connect } from '../../../../db/dbConfig'
 import { NextResponse } from "next/server";
-import User from "../../../../models/userModel";
+import Pass from "../../../../models/passModel";
 
 connect();
 
@@ -8,7 +8,7 @@ export async function DELETE(request, { params }) {
     const id = params.id;
 
     try {
-        const user = await User.findById(id);
+        const user = await Pass.findById(id);
 
         if (!user) {
             return NextResponse.json({ message: "User not found" });
@@ -23,8 +23,7 @@ export async function DELETE(request, { params }) {
             });
         } else {
             return NextResponse.json({
-                message: "User is already deleted",
-                
+                message: "User is already deleted",                
             });
         }
     } catch (err) {
