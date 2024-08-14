@@ -148,9 +148,9 @@ const BusPassForm = () => {
     const confirmDelete = async () => {
         if (passToDelete) {
             try {
-                const response = await fetch(`/api/Pass/deletePass/${passToDelete}`, {
-                    method: 'DELETE',
-                });
+                const response = await axios.delete(`/api/Pass/deletePass/${passToDelete}`);
+                const res = await response.json();
+                console.log(res)
 
                 if (response.ok) {
                     toast.success('Pass deleted successfully');
