@@ -24,6 +24,7 @@ import { useRouter } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BeatLoader } from "react-spinners";
+import axios from 'axios'; 
 
 // Validation schema excluding address
 const validationSchema = Yup.object({
@@ -79,17 +80,17 @@ const Profile = () => {
     const handleSave = async (values) => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/profileUpdate/${user._id}`, {
-                method: 'PUT',
-                body: createFormData(values),
+            const formData = createFormData(values); // Ensure createFormData is available
+
+            const response = await axios.put(`/api/profileUpdate/${user._id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data' // Adjust this if needed based on createFormData output
+                }
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to update profile');
-            }
+            const result = response.data;
 
-            const result = await response.json();
-            if (result.status === 200) {
+            if (response.status === 200) {
                 toast.success(result.msg || 'Profile updated successfully');
                 setIsEditing(false);
                 setError(null);
