@@ -12,6 +12,7 @@ export const fetchApiUsers = createAsyncThunk(
     "user/fetchApiUsers",
     async (_, { dispatch }) => {
         const response = await fetch("/api/me");
+        console.log(response.status)
 
         if (response.status === 401) {
             dispatch(logout()); 

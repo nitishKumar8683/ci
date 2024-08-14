@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchApiUsers, logout } from '../../../app/redux/slice';
 import { useRouter } from "next/navigation";
+import { BeatLoader } from "react-spinners"; 
 
 const Home = ({ children }) => {
     const [open, setOpen] = useState(false);
@@ -34,9 +35,17 @@ const Home = ({ children }) => {
     console.log("Error:", error);
 
     useEffect(() => {
-        dispatch(fetchApiUsers()).catch(() => {
-            router.push('/login');
-        });
+        const fetchData = async () => {
+            try {
+                await dispatch(fetchApiUsers()).unwrap();
+            } catch (err) {
+                if (err.message === "Unauthorized. Redirecting to login.") {
+                    router.push('/login'); 
+                }
+            }
+        };
+
+        fetchData();
     }, [dispatch, router]);
 
     const toggleDrawer = () => {
@@ -115,14 +124,18 @@ const Home = ({ children }) => {
                     </IconButton>
                     <span className="text-white ml-4 text-lg flex-1">Bus Pass</span>
                     <div className="flex items-center space-x-2 relative">
-                        <div
-                            className="flex items-center cursor-pointer"
-                            onClick={handleProfileMenuOpen}
-                        >
-                            <Avatar src="/profile.jpg" alt="Profile" />
-                            <span className="text-white ml-2">{`${firstName} ${lastName}`}</span>
-                            <ArrowDropDownIcon className="text-white ml-1" /> {/* Dropdown Icon */}
-                        </div>
+                        {isLoading ? (
+                            <BeatLoader color="#ffffff" loading={isLoading} size={15} />
+                        ) : (
+                            <div
+                                className="flex items-center cursor-pointer"
+                                onClick={handleProfileMenuOpen}
+                            >
+                                <Avatar src="/profile.jpg" alt="Profile" />
+                                <span className="text-white ml-2">{`${firstName} ${lastName}`}</span>
+                                <ArrowDropDownIcon className="text-white ml-1" /> {/* Dropdown Icon */}
+                            </div>
+                        )}
                         <Menu
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
